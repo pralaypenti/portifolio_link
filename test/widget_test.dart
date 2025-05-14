@@ -8,19 +8,32 @@ void main() {
     // but we can still consider disabling if needed
   });
 
-  testWidgets('HeroSection displays title and subtitle', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(const MaterialApp(home: HeroSection()));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('heroTitle')), findsOneWidget);
-    expect(find.text("Hi, I'm Pralay Penti"), findsOneWidget);
-    expect(find.byKey(const Key('heroSubtitle')), findsOneWidget);
-    expect(
-      find.text("Flutter Developer | 3.3 Years Experience"),
-      findsOneWidget,
-    );
-  });
+testWidgets('HeroSection displays title and dynamic subtitle', (WidgetTester tester) async {
+  await tester.pumpWidget(const MaterialApp(home: HeroSection()));
+  await tester.pumpAndSettle();
+
+  // Expect title
+  expect(find.byKey(const Key('heroTitle')), findsOneWidget);
+  expect(find.text("Hi, I'm Pralay Penti"), findsOneWidget);
+
+  // Expect subtitle with dynamic experience
+  expect(find.byKey(const Key('heroSubtitle')), findsOneWidget);
+
+  // Calculate expected experience
+  final joiningDate = DateTime(2021, 12, 16);
+  final now = DateTime.now();
+
+  int totalMonths = (now.year - joiningDate.year) * 12 + (now.month - joiningDate.month);
+  if (now.day >= joiningDate.day) {
+    totalMonths += 1;
+  }
+  double experience = totalMonths / 12.0;
+  final expectedSubtitle = "Flutter Developer | ${experience.toStringAsFixed(1)} Years Experience";
+
+  // Validate dynamic subtitle
+  expect(find.text(expectedSubtitle), findsOneWidget);
+});
+
 
   testWidgets('AboutSection contains heading and description', (
     WidgetTester tester,
