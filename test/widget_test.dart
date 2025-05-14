@@ -3,23 +3,32 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:portifolio_link/portifolio.dart';
 
 void main() {
-  setUpAll(() {
-    // Animation control is not mandatory due to pumpAndSettle()
-    // but we can still consider disabling if needed
-  });
+  setUpAll(() {});
 
-  testWidgets('HeroSection displays title and subtitle', (
+  testWidgets('HeroSection displays title and dynamic subtitle', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: HeroSection()));
     await tester.pumpAndSettle();
+
     expect(find.byKey(const Key('heroTitle')), findsOneWidget);
     expect(find.text("Hi, I'm Pralay Penti"), findsOneWidget);
+
     expect(find.byKey(const Key('heroSubtitle')), findsOneWidget);
-    expect(
-      find.text("Flutter Developer | 3.3 Years Experience"),
-      findsOneWidget,
-    );
+
+    final joiningDate = DateTime(2021, 12, 16);
+    final now = DateTime.now();
+
+    int totalMonths =
+        (now.year - joiningDate.year) * 12 + (now.month - joiningDate.month);
+    if (now.day >= joiningDate.day) {
+      totalMonths += 1;
+    }
+    double experience = totalMonths / 12.0;
+    final expectedSubtitle =
+        "Flutter Developer | ${experience.toStringAsFixed(1)} Years Experience";
+
+    expect(find.text(expectedSubtitle), findsOneWidget);
   });
 
   testWidgets('AboutSection contains heading and description', (
@@ -49,23 +58,19 @@ void main() {
   testWidgets('ProjectsSection displays project title and description', (
     WidgetTester tester,
   ) async {
-    // Wrap with Scaffold and SingleChildScrollView to avoid RenderFlex overflow in test env
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(body: SingleChildScrollView(child: ProjectsSection())),
       ),
     );
 
-    await tester.pumpAndSettle(); // Ensure animations complete
+    await tester.pumpAndSettle();
 
-    // Section title
     expect(find.text("Projects"), findsOneWidget);
 
-    // Project title using key and exact match
     expect(find.byKey(const Key('projectTitle')), findsOneWidget);
     expect(find.text("SBI YONO 2.0"), findsOneWidget);
 
-    // Project description using key and full content
     expect(find.byKey(const Key('projectDescription')), findsOneWidget);
     expect(
       find.text(
@@ -84,46 +89,52 @@ void main() {
     expect(find.text("📞 +91-7036702499"), findsOneWidget);
     expect(find.text("✉️ pralaypenti3@gmail.com"), findsOneWidget);
   });
-  testWidgets('SkillsSection displays correctly without overflow', (WidgetTester tester) async {
-  // Build widget with sufficient space
-  await tester.pumpWidget(
-    MaterialApp(
-      home: Scaffold(
-        body: SingleChildScrollView( // Add scrolling to prevent overflow
-          child: SkillsSection(),
-        ),
+  testWidgets('SkillsSection displays correctly without overflow', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: SingleChildScrollView(child: SkillsSection())),
       ),
-    ),
-  );
+    );
 
-  await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
 
-  // Verify title
-  final titleFinder = find.text('Languages, Tools & Frameworks');
-  expect(titleFinder, findsOneWidget);
+    final titleFinder = find.text('Languages, Tools & Frameworks');
+    expect(titleFinder, findsOneWidget);
 
-  // Verify categories
-  final expectedCategories = [
-    "Languages", "Frameworks", "State Management",
-    "Tools & Platforms", "Cloud & Backend",
-  ];
-  
-  for (final category in expectedCategories) {
-    expect(find.text(category), findsOneWidget);
-  }
+    final expectedCategories = [
+      "Languages",
+      "Frameworks",
+      "State Management",
+      "Tools & Platforms",
+      "Cloud & Backend",
+    ];
 
-  // Verify skills
-  final expectedSkills = [
-    "Dart", "MobX", "Android Studio", "VS Code",
-    "Git", "Postman", "Figma", "Firebase", "REST APIs",
-  ];
-  
-  for (final skill in expectedSkills) {
-    expect(find.text(skill), findsOneWidget);
-  }
+    for (final category in expectedCategories) {
+      expect(find.text(category), findsOneWidget);
+    }
 
-  // Verify no overflow errors
-  expect(tester.takeException(), isNull, 
-      reason: 'Overflow error detected in layout');
-});
+    final expectedSkills = [
+      "Dart",
+      "MobX",
+      "Android Studio",
+      "VS Code",
+      "Git",
+      "Postman",
+      "Figma",
+      "Firebase",
+      "REST APIs",
+    ];
+
+    for (final skill in expectedSkills) {
+      expect(find.text(skill), findsOneWidget);
+    }
+
+    expect(
+      tester.takeException(),
+      isNull,
+      reason: 'Overflow error detected in layout',
+    );
+  });
 }
