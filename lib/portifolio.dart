@@ -48,8 +48,29 @@ class PortfolioHomePage extends StatelessWidget {
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key});
 
+  String _calculateExperience() {
+    final joiningDate = DateTime(2021, 12, 16);
+    final now = DateTime.now();
+
+    // Calculate total months from joining to now
+    int totalMonths = (now.year - joiningDate.year) * 12 + (now.month - joiningDate.month);
+
+    // If day of current month >= joining day, count this month too
+    if (now.day >= joiningDate.day) {
+      totalMonths += 1;
+    }
+
+    // Convert total months to decimal years
+    double experience = totalMonths / 12;
+
+    // Keep 1 decimal place
+    return experience.toStringAsFixed(1);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final experience = _calculateExperience();
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
       height: MediaQuery.of(context).size.height,
@@ -75,10 +96,10 @@ class HeroSection extends StatelessWidget {
           const SizedBox(height: 10),
           FadeInUp(
             delay: const Duration(milliseconds: 300),
-            child: const Text(
-              "Flutter Developer | 3.3 Years Experience",
-              key: Key('heroSubtitle'),
-              style: TextStyle(fontSize: 24),
+            child: Text(
+              "Flutter Developer | $experience Years Experience",
+              key: const Key('heroSubtitle'),
+              style: const TextStyle(fontSize: 24),
             ),
           ),
         ],
@@ -86,6 +107,8 @@ class HeroSection extends StatelessWidget {
     );
   }
 }
+
+
 
 class AboutSection extends StatelessWidget {
   const AboutSection({super.key});
