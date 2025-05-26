@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import 'dart:io';
 
 class PortfolioApp extends StatelessWidget {
@@ -48,24 +49,9 @@ class PortfolioHomePage extends StatelessWidget {
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key});
 
-  String _calculateExperience() {
-    final joiningDate = DateTime(2021, 12, 16);
-    final now = DateTime.now();
-
-    int totalMonths = (now.year - joiningDate.year) * 12 + (now.month - joiningDate.month);
-
-    if (now.day >= joiningDate.day) {
-      totalMonths += 1;
-    }
-
-    double experience = totalMonths / 12;
-
-    return experience.toStringAsFixed(1);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final experience = _calculateExperience();
+    final experience = calculateExperience(joiningDate: DateTime(2021, 12, 16));
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
@@ -104,26 +90,29 @@ class HeroSection extends StatelessWidget {
   }
 }
 
-
 class AboutSection extends StatelessWidget {
   const AboutSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final experience = calculateExperience(joiningDate: DateTime(2021, 12, 16));
+
     return FadeInLeft(
       child: Container(
         padding: const EdgeInsets.all(40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
               "About Me",
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             Text(
-              "I am a passionate Flutter Developer with 3+ years of professional experience crafting pixel-perfect, high-performance mobile applications. Adept in Dart and Flutter architecture patterns, I focus on delivering smooth user experiences with efficient code. I've played a significant role in building and maintaining enterprise-level apps like SBI YONO 2.0. Skilled in integrating REST APIs, Firebase, and platform services, I prioritize writing clean, scalable, and testable code.",
-              style: TextStyle(fontSize: 18),
+              "I am a passionate Flutter Developer with $experience years of experience building robust, scalable, and performant mobile applications. "
+              "I specialize in cross-platform development, state management, and API integration. "
+              "I love turning complex problems into elegant solutions and continuously improving my skills in Dart, Flutter, and modern app architectures.",
+              style: TextStyle(fontSize: 18, height: 1.5),
             ),
           ],
         ),
@@ -143,15 +132,21 @@ class ExperienceSection extends StatelessWidget {
         color: const Color(0xFF1C1F26),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
               "Experience",
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             Text(
-              "Tata Consultancy Services | Dec 2021 - Present\n- Flutter Developer\n- Successfully contributed to the SBI YONO 2.0 mobile banking project for the State Bank of India.\n- Built scalable and secure cross-platform mobile applications using Flutter and MobX.\n- Applied clean architecture principles for maintainable and testable code.\n- Integrated RESTful APIs, Firebase, and ensured security compliance for financial transactions.\n- Conducted unit testing and peer code reviews to ensure code quality and performance.\n- Actively collaborated in Agile ceremonies including sprint planning, reviews, and retrospectives.",
-              style: TextStyle(fontSize: 18),
+              'Tata Consultancy Services | Dec 2021 - Present\n\n'
+              '- Role: Flutter Developer\n'
+              '- Delivered high-performance mobile apps for enterprise banking clients including ICICI and SBI.\n'
+              '- Implemented scalable and maintainable codebases using Flutter and MobX state management.\n'
+              '- Integrated RESTful APIs and optimized app performance.\n'
+              '- Collaborated in Agile teams to ensure timely delivery and high code quality.\n'
+              '- Contributed to reusable component libraries for consistent UI across platforms.',
+              style: TextStyle(fontSize: 18, height: 1.5, color: Colors.white),
             ),
           ],
         ),
@@ -166,29 +161,33 @@ class ProjectsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FadeInUp(
-      child: Container(
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Projects",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: const [
-                  ProjectCard(
-                    title: "SBI YONO 2.0",
-                    description:
-                        "An advanced mobile banking application developed for the State Bank of India. Created using Flutter with MobX for state management, the app delivers fast, secure, and user-friendly banking experiences. Key responsibilities included UI implementation, API integration, state management with MobX, and collaboration with cross-functional teams to meet business goals.",
-                  ),
-                ],
+      child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                "Projects",
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
-            ),
-          ],
+              SizedBox(height: 10),
+              ProjectCard(
+                title: "ICICI Bank App",
+                description:
+                    "Responsible for designing and developing common reusable widgets used across all modules in the app. "
+                    "Implemented scalable and maintainable UI components to ensure consistency and reduce development time. "
+                    "Utilized MobX for efficient state management and handled dynamic UI updates for a seamless user experience.",
+              ),
+              ProjectCard(
+                title: "SBI YONO 2.0",
+                description:
+                    "Contributed to the State Bank of India’s mobile banking application, specifically focused on the loan journey. "
+                    "Worked on features such as loan applications, eligibility checks, interest calculators, and sanction letter management. "
+                    "Emphasized smooth user experience, modular architecture, and performance optimization.",
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -394,4 +393,19 @@ class SkillChip extends StatelessWidget {
       ),
     );
   }
+}
+
+String calculateExperience({required DateTime joiningDate}) {
+  final now = DateTime.now();
+
+  int totalMonths =
+      (now.year - joiningDate.year) * 12 + (now.month - joiningDate.month);
+
+  if (now.day >= joiningDate.day) {
+    totalMonths += 1;
+  }
+
+  double experience = totalMonths / 12;
+
+  return experience.toStringAsFixed(1);
 }
