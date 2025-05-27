@@ -3,9 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:portifolio_link/portifolio.dart';
 
 void main() {
-  setUpAll(() {
-    
-  });
+  setUpAll(() {});
 
   testWidgets('HeroSection displays title and dynamic subtitle', (
     WidgetTester tester,
@@ -34,68 +32,68 @@ void main() {
   });
 
   testWidgets('AboutSection renders with correct title and experience', (
-  WidgetTester tester,
-) async {
-  await tester.pumpWidget(const MaterialApp(home: Scaffold(body: AboutSection())));
-  await tester.pumpAndSettle();
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: AboutSection())),
+    );
+    await tester.pumpAndSettle();
 
-  expect(find.text('About Me'), findsOneWidget);
+    expect(find.text('About Me'), findsOneWidget);
 
+    expect(
+      find.textContaining('I am a passionate Flutter Developer'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('years of experience'), findsOneWidget);
 
-  expect(find.textContaining('I am a passionate Flutter Developer'), findsOneWidget);
-  expect(find.textContaining('years of experience'), findsOneWidget);
+    final pattern = RegExp(r'\d+(\.\d+)? years of experience');
+    final matches = find.byWidgetPredicate(
+      (widget) => widget is Text && pattern.hasMatch(widget.data ?? ''),
+    );
+    expect(matches, findsOneWidget);
+  });
 
-  
-  final pattern = RegExp(r'\d+(\.\d+)? years of experience');
-  final matches = find.byWidgetPredicate((widget) =>
-    widget is Text && pattern.hasMatch(widget.data ?? '')
-  );
-  expect(matches, findsOneWidget);
-});
+  testWidgets('ExperienceSection has job title and details', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: ExperienceSection()));
+    await tester.pumpAndSettle();
 
+    expect(find.text("Experience"), findsOneWidget);
+    expect(find.textContaining("Tata Consultancy Services"), findsOneWidget);
+    expect(find.textContaining("SBI"), findsOneWidget);
+  });
 
- testWidgets('ExperienceSection has job title and details', (WidgetTester tester) async {
-  await tester.pumpWidget(const MaterialApp(home: ExperienceSection()));
-  await tester.pumpAndSettle();
-
-  expect(find.text("Experience"), findsOneWidget);
-  expect(find.textContaining("Tata Consultancy Services"), findsOneWidget);
-  expect(find.textContaining("SBI"), findsOneWidget); 
-});
-
-testWidgets('ProjectsSection renders all ProjectCards', (WidgetTester tester) async {
-  await tester.pumpWidget(
-    const MaterialApp(
-      home: Scaffold(
-        body: SingleChildScrollView( 
-          child: ProjectsSection(),
-        ),
+  testWidgets('ProjectsSection renders all ProjectCards', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: SingleChildScrollView(child: ProjectsSection())),
       ),
-    ),
-  );
+    );
 
-  await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
 
+    expect(find.text('Projects'), findsOneWidget);
 
-  expect(find.text('Projects'), findsOneWidget);
+    expect(find.text('ICICI Bank App'), findsOneWidget);
+    expect(
+      find.textContaining(
+        'Responsible for designing and developing common reusable widgets',
+      ),
+      findsOneWidget,
+    );
 
-  expect(find.text('ICICI Bank App'), findsOneWidget);
-  expect(
-    find.textContaining('Responsible for designing and developing common reusable widgets'),
-    findsOneWidget,
-  );
+    expect(find.text('SBI YONO 2.0'), findsOneWidget);
+    expect(
+      find.textContaining('Contributed to the State Bank of India'),
+      findsOneWidget,
+    );
 
-  
-  expect(find.text('SBI YONO 2.0'), findsOneWidget);
-  expect(
-    find.textContaining('Contributed to the State Bank of India'),
-    findsOneWidget,
-  );
-
-
-  expect(find.byType(ProjectCard), findsNWidgets(2));
-});
-
+    expect(find.byType(ProjectCard), findsNWidgets(2));
+  });
 
   testWidgets('ContactSection shows phone and email', (
     WidgetTester tester,
@@ -109,15 +107,9 @@ testWidgets('ProjectsSection renders all ProjectCards', (WidgetTester tester) as
   testWidgets('SkillsSection displays correctly without overflow', (
     WidgetTester tester,
   ) async {
- 
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: SingleChildScrollView(
-       
-            child: SkillsSection(),
-          ),
-        ),
+        home: Scaffold(body: SingleChildScrollView(child: SkillsSection())),
       ),
     );
 
@@ -125,7 +117,6 @@ testWidgets('ProjectsSection renders all ProjectCards', (WidgetTester tester) as
 
     final titleFinder = find.text('Languages, Tools & Frameworks');
     expect(titleFinder, findsOneWidget);
-
 
     final expectedCategories = [
       "Languages",
@@ -139,7 +130,6 @@ testWidgets('ProjectsSection renders all ProjectCards', (WidgetTester tester) as
       expect(find.text(category), findsOneWidget);
     }
 
-   
     final expectedSkills = [
       "Dart",
       "MobX",
@@ -156,7 +146,6 @@ testWidgets('ProjectsSection renders all ProjectCards', (WidgetTester tester) as
       expect(find.text(skill), findsOneWidget);
     }
 
- 
     expect(
       tester.takeException(),
       isNull,
@@ -187,5 +176,31 @@ testWidgets('ProjectsSection renders all ProjectCards', (WidgetTester tester) as
 
     expect(find.text('Test Project'), findsOneWidget);
     expect(find.text('A description of the test project.'), findsOneWidget);
+  });
+  testWidgets('CertificatesSection displays titles and issuers only', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(home: Scaffold(body: CertificatesSection())),
+    );
+
+    await tester.pump();
+    await tester.pump(Duration(seconds: 3));
+
+    expect(find.text("Licenses & Certifications"), findsOneWidget);
+
+    expect(find.text('Flutter - Beginner course'), findsOneWidget);
+    expect(
+      find.text('Flutter Essential Training: Build for Multiple Platforms'),
+      findsOneWidget,
+    );
+    expect(find.text('Flutter for Beginners using Dart'), findsOneWidget);
+
+    expect(find.text('Udemy'), findsOneWidget);
+    expect(find.text('LinkedIn'), findsOneWidget);
+    expect(find.text('MindLuster'), findsOneWidget);
+
+    expect(find.textContaining('title:'), findsNothing);
+    expect(find.textContaining('Issued'), findsNothing);
   });
 }

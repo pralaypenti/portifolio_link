@@ -38,6 +38,7 @@ class PortfolioHomePage extends StatelessWidget {
             ExperienceSection(),
             SkillsSection(),
             ProjectsSection(),
+            CertificatesSection(),
             ContactSection(),
           ],
         ),
@@ -129,7 +130,6 @@ class ExperienceSection extends StatelessWidget {
     return FadeInRight(
       child: Container(
         padding: const EdgeInsets.all(40),
-        color: const Color(0xFF1C1F26),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -182,9 +182,9 @@ class ProjectsSection extends StatelessWidget {
               ProjectCard(
                 title: "SBI YONO 2.0",
                 description:
-                    "Contributed to the State Bank of India’s mobile banking application, specifically focused on the loan journey. "
-                    "Worked on features such as loan applications, eligibility checks, interest calculators, and sanction letter management. "
-                    "Emphasized smooth user experience, modular architecture, and performance optimization.",
+                    "Contributed to the State Bank of India’s mobile banking app, focusing on the loan journey. "
+                    "Implemented features like loan applications, eligibility checks, interest calculators, and sanction letter management. "
+                    "Used MobX for efficient state management to keep UI logic clean and maintainable.",
               ),
             ],
           ),
@@ -253,7 +253,6 @@ class ContactSection extends StatelessWidget {
     return FadeIn(
       child: Container(
         padding: const EdgeInsets.all(40),
-        color: const Color(0xFF22252C),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -408,4 +407,72 @@ String calculateExperience({required DateTime joiningDate}) {
   double experience = totalMonths / 12;
 
   return experience.toStringAsFixed(1);
+}
+
+class Certificate {
+  final String title;
+  final String issuer;
+
+  Certificate({required this.title, required this.issuer});
+}
+
+class CertificatesSection extends StatelessWidget {
+  const CertificatesSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Certificate> certificates = [
+      Certificate(title: 'Flutter - Beginner course', issuer: 'Udemy'),
+      Certificate(
+        title: 'Flutter Essential Training: Build for Multiple Platforms',
+        issuer: 'LinkedIn',
+      ),
+      Certificate(
+        title: 'Flutter for Beginners using Dart',
+        issuer: 'MindLuster',
+      ),
+    ];
+
+    return FadeInUp(
+      child: Container(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Licenses & Certifications",
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ...certificates.map(
+              (cert) => Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      cert.title,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      cert.issuer,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
