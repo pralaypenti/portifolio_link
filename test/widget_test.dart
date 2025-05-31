@@ -203,4 +203,58 @@ void main() {
     expect(find.textContaining('title:'), findsNothing);
     expect(find.textContaining('Issued'), findsNothing);
   });
+
+
+testWidgets('Contact form renders input fields and button', (WidgetTester tester) async {
+  await tester.pumpWidget(const MaterialApp(
+    home: Scaffold(
+      body: ContactFormSection(),
+    ),
+  ));
+
+  await tester.pumpAndSettle(); 
+
+  expect(find.text('Name'), findsOneWidget);
+  expect(find.text('Email'), findsOneWidget);
+  expect(find.text('Message'), findsOneWidget);
+  expect(find.byType(TextFormField), findsNWidgets(3));
+  expect(find.text('Send Message'), findsOneWidget);
+});
+
+testWidgets('Form shows validation errors when fields are empty', (WidgetTester tester) async {
+  await tester.pumpWidget(const MaterialApp(
+    home: Scaffold(
+      body: ContactFormSection(),
+    ),
+  ));
+
+  await tester.pumpAndSettle(); 
+
+  final button = find.text('Send Message');
+  await tester.tap(button);
+  await tester.pump();
+
+  expect(find.text('Please enter Name'), findsOneWidget);
+  expect(find.text('Please enter Email'), findsOneWidget);
+  expect(find.text('Please enter Message'), findsOneWidget);
+});
+
+
+  testWidgets('Form shows email validation error on invalid email', (WidgetTester tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: Scaffold(
+        body: ContactFormSection(),
+      ),
+    ));
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'John Doe');
+    await tester.enterText(find.byType(TextFormField).at(1), 'invalidemail');
+    await tester.enterText(find.byType(TextFormField).at(2), 'This is a message.');
+
+    final button = find.text('Send Message');
+    await tester.tap(button);
+    await tester.pump();
+
+    expect(find.text('Enter a valid email'), findsOneWidget);
+  });
 }
