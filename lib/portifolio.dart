@@ -28,6 +28,10 @@ class PortfolioApp extends StatelessWidget {
   }
 }
 
+
+
+final GlobalKey scrollViewKey = GlobalKey();
+
 class PortfolioHomePage extends StatefulWidget {
   const PortfolioHomePage({super.key});
 
@@ -38,7 +42,6 @@ class PortfolioHomePage extends StatefulWidget {
 class _PortfolioHomePageState extends State<PortfolioHomePage> {
   final ScrollController _scrollController = ScrollController();
 
-  // GlobalKeys for each section
   static final heroKey = GlobalKey();
   static final aboutKey = GlobalKey();
   static final experienceKey = GlobalKey();
@@ -112,6 +115,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
       left: _showMenuOverlay ? 0 : -MediaQuery.of(context).size.width,
       right: _showMenuOverlay ? 0 : MediaQuery.of(context).size.width,
       child: Material(
+        // color: Colors.black87,
         child: SafeArea(
           child: Column(
             children: [
@@ -127,28 +131,24 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children:
-                          sections
-                              .map(
-                                (section) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
-                                  child: TextButton(
-                                    onPressed:
-                                        () => onMenuItemClicked(section['key']),
-                                    child: Text(
-                                      section['label'],
-                                      style: const TextStyle(
-                                        fontSize: 25,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                      children: sections
+                          .map(
+                            (section) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: TextButton(
+                                onPressed: () => onMenuItemClicked(section['key']),
+                                child: Text(
+                                  section['label'],
+                                  style: const TextStyle(
+                                    fontSize: 25,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              )
-                              .toList(),
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
                   ),
                 ),
@@ -169,6 +169,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
         actions: [
           if (_showHamburger)
             IconButton(
+              key: const Key('hamburger_button'),
               icon: const Icon(Icons.menu),
               onPressed: () => setState(() => _showMenuOverlay = true),
             ),
@@ -177,6 +178,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
       body: Stack(
         children: [
           SingleChildScrollView(
+            key: scrollViewKey,  // <--- Assign public key here
             controller: _scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,6 +203,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
     );
   }
 }
+
 
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key});

@@ -204,57 +204,102 @@ void main() {
     expect(find.textContaining('Issued'), findsNothing);
   });
 
+  testWidgets('Contact form renders input fields and button', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: ContactFormSection())),
+    );
 
-testWidgets('Contact form renders input fields and button', (WidgetTester tester) async {
-  await tester.pumpWidget(const MaterialApp(
-    home: Scaffold(
-      body: ContactFormSection(),
-    ),
-  ));
+    await tester.pumpAndSettle();
 
-  await tester.pumpAndSettle(); 
+    expect(find.text('Name'), findsOneWidget);
+    expect(find.text('Email'), findsOneWidget);
+    expect(find.text('Message'), findsOneWidget);
+    expect(find.byType(TextFormField), findsNWidgets(3));
+    expect(find.text('Send Message'), findsOneWidget);
+  });
 
-  expect(find.text('Name'), findsOneWidget);
-  expect(find.text('Email'), findsOneWidget);
-  expect(find.text('Message'), findsOneWidget);
-  expect(find.byType(TextFormField), findsNWidgets(3));
-  expect(find.text('Send Message'), findsOneWidget);
-});
+  testWidgets('Form shows validation errors when fields are empty', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: ContactFormSection())),
+    );
 
-testWidgets('Form shows validation errors when fields are empty', (WidgetTester tester) async {
-  await tester.pumpWidget(const MaterialApp(
-    home: Scaffold(
-      body: ContactFormSection(),
-    ),
-  ));
+    await tester.pumpAndSettle();
 
-  await tester.pumpAndSettle(); 
+    final button = find.text('Send Message');
+    await tester.tap(button);
+    await tester.pump();
 
-  final button = find.text('Send Message');
-  await tester.tap(button);
-  await tester.pump();
+    expect(find.text('Please enter Name'), findsOneWidget);
+    expect(find.text('Please enter Email'), findsOneWidget);
+    expect(find.text('Please enter Message'), findsOneWidget);
+  });
 
-  expect(find.text('Please enter Name'), findsOneWidget);
-  expect(find.text('Please enter Email'), findsOneWidget);
-  expect(find.text('Please enter Message'), findsOneWidget);
-});
-
-
-  testWidgets('Form shows email validation error on invalid email', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(
-      home: Scaffold(
-        body: ContactFormSection(),
-      ),
-    ));
+  testWidgets('Form shows email validation error on invalid email', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: ContactFormSection())),
+    );
 
     await tester.enterText(find.byType(TextFormField).at(0), 'John Doe');
     await tester.enterText(find.byType(TextFormField).at(1), 'invalidemail');
-    await tester.enterText(find.byType(TextFormField).at(2), 'This is a message.');
+    await tester.enterText(
+      find.byType(TextFormField).at(2),
+      'This is a message.',
+    );
 
     final button = find.text('Send Message');
     await tester.tap(button);
     await tester.pump();
 
     expect(find.text('Enter a valid email'), findsOneWidget);
+  });
+
+  // Make sure scrollViewKey matches the key in your widget
+  final scrollViewKey = GlobalKey();
+
+  testWidgets('Hamburger menu is hidden initially', (WidgetTester tester) async {
+    // Build widget
+    await tester.pumpWidget(const MaterialApp(home: PortfolioHomePage()));
+
+    // Wait for any animations or builds to complete
+    await tester.pumpAndSettle();
+
+    // Hamburger menu icon should NOT be visible at start
+    expect(find.byIcon(Icons.menu), findsNothing);
+    expect(find.byKey(const Key('hamburger_button')), findsNothing);
+  });
+
+  testWidgets('Hamburger menu appears after scrolling down', (WidgetTester tester) async {
+    await tester.pumpWidget(const MaterialApp(home: PortfolioHomePage()));
+
+    // Initially hamburger menu button should NOT be visible
+    expect(find.byKey(const Key('hamburger_button')), findsNothing);
+
+    // Scroll down by 150 pixels using the scrollViewKey
+    await tester.drag(find.byKey(scrollViewKey), const Offset(0, -150));
+    await tester.pumpAndSettle();
+
+    // Now hamburger menu button should be visible
+    expect(find.byKey(const Key('hamburger_button')), findsOneWidget);
+
+    // Tap the hamburger button to open menu overlay
+    await tester.tap(find.byKey(const Key('hamburger_button')));
+    await tester.pumpAndSettle();
+
+    // Check if menu overlay shows menu items
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('About'), findsOneWidget);
+
+    // Tap on a menu item (Home) to close overlay
+    await tester.tap(find.text('Home'));
+    await tester.pumpAndSettle();
+
+    // Menu overlay should disappear after tapping a menu item
+    expect(find.text('Home'), findsNothing);
   });
 }
