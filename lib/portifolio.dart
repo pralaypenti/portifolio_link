@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:url_launcher/url_launcher.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
 import 'dart:io';
@@ -30,9 +31,12 @@ class PortfolioApp extends StatelessWidget {
 
 
 
-final GlobalKey scrollViewKey = GlobalKey();
+
 
 class PortfolioHomePage extends StatefulWidget {
+  static const scrollViewKey = Key('portfolio_scroll_view');
+  static const hamburgerButtonKey = Key('hamburger_menu_button');
+
   const PortfolioHomePage({super.key});
 
   @override
@@ -41,6 +45,7 @@ class PortfolioHomePage extends StatefulWidget {
 
 class _PortfolioHomePageState extends State<PortfolioHomePage> {
   final ScrollController _scrollController = ScrollController();
+  static const _scrollThreshold = 150.0;
 
   static final heroKey = GlobalKey();
   static final aboutKey = GlobalKey();
@@ -49,7 +54,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
   static final projectsKey = GlobalKey();
   static final certificatesKey = GlobalKey();
   static final contactKey = GlobalKey();
-  static final contactMess = GlobalKey();
+  static final contactMessKey = GlobalKey();
 
   bool _showHamburger = false;
   bool _showMenuOverlay = false;
@@ -68,23 +73,26 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
       {'label': 'Projects', 'key': projectsKey},
       {'label': 'Certificates', 'key': certificatesKey},
       {'label': 'Contact ME', 'key': contactKey},
-      {'label': 'Drop Me a Message', 'key': contactMess},
+      {'label': 'Drop Me a Message', 'key': contactMessKey},
     ];
 
-    _scrollController.addListener(() {
-      if (_scrollController.offset > 100 && !_showHamburger) {
-        setState(() => _showHamburger = true);
-      } else if (_scrollController.offset <= 100 && _showHamburger) {
-        setState(() {
-          _showHamburger = false;
-          _showMenuOverlay = false;
-        });
-      }
-    });
+    _scrollController.addListener(_handleScroll);
+  }
+
+  void _handleScroll() {
+    if (_scrollController.offset > _scrollThreshold && !_showHamburger) {
+      setState(() => _showHamburger = true);
+    } else if (_scrollController.offset <= _scrollThreshold && _showHamburger) {
+      setState(() {
+        _showHamburger = false;
+        _showMenuOverlay = false;
+      });
+    }
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_handleScroll);
     _scrollController.dispose();
     super.dispose();
   }
@@ -102,9 +110,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
 
   void onMenuItemClicked(GlobalKey key) {
     scrollToSection(key);
-    setState(() {
-      _showMenuOverlay = false;
-    });
+    setState(() => _showMenuOverlay = false);
   }
 
   Widget buildMenuOverlay() {
@@ -115,7 +121,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
       left: _showMenuOverlay ? 0 : -MediaQuery.of(context).size.width,
       right: _showMenuOverlay ? 0 : MediaQuery.of(context).size.width,
       child: Material(
-        // color: Colors.black87,
+        color: Colors.black87,
         child: SafeArea(
           child: Column(
             children: [
@@ -169,7 +175,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
         actions: [
           if (_showHamburger)
             IconButton(
-              key: const Key('hamburger_button'),
+              key: PortfolioHomePage.hamburgerButtonKey,
               icon: const Icon(Icons.menu),
               onPressed: () => setState(() => _showMenuOverlay = true),
             ),
@@ -178,7 +184,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            key: scrollViewKey,  // <--- Assign public key here
+            key: PortfolioHomePage.scrollViewKey,
             controller: _scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,12 +194,9 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
                 Container(key: experienceKey, child: const ExperienceSection()),
                 Container(key: skillsKey, child: const SkillsSection()),
                 Container(key: projectsKey, child: const ProjectsSection()),
-                Container(
-                  key: certificatesKey,
-                  child: const CertificatesSection(),
-                ),
+                Container(key: certificatesKey, child: const CertificatesSection()),
                 Container(key: contactKey, child: const ContactSection()),
-                Container(key: contactMess, child: const ContactSectio()),
+                Container(key: contactMessKey, child: const ContactSectio()),
               ],
             ),
           ),
