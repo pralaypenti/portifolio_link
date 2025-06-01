@@ -259,47 +259,90 @@ void main() {
     expect(find.text('Enter a valid email'), findsOneWidget);
   });
 
-  // Make sure scrollViewKey matches the key in your widget
-  final scrollViewKey = GlobalKey();
+  group('PortfolioHomePage Widget Tests', () {
+    late Widget homePage;
 
-  testWidgets('Hamburger menu is hidden initially', (WidgetTester tester) async {
-    // Build widget
-    await tester.pumpWidget(const MaterialApp(home: PortfolioHomePage()));
+    setUp(() {
+      homePage = const MaterialApp(home: PortfolioHomePage());
+    });
 
-    // Wait for any animations or builds to complete
-    await tester.pumpAndSettle();
+    testWidgets('Tapping hamburger shows overlay menu', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(homePage);
 
-    // Hamburger menu icon should NOT be visible at start
-    expect(find.byIcon(Icons.menu), findsNothing);
-    expect(find.byKey(const Key('hamburger_button')), findsNothing);
-  });
+      final scrollView = find.byKey(PortfolioHomePage.scrollViewKey);
+      await tester.drag(scrollView, const Offset(0, -300));
+      await tester.pump();
 
-  testWidgets('Hamburger menu appears after scrolling down', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: PortfolioHomePage()));
+      await tester.tap(find.byKey(PortfolioHomePage.hamburgerButtonKey));
+      await tester.pumpAndSettle();
 
-    // Initially hamburger menu button should NOT be visible
-    expect(find.byKey(const Key('hamburger_button')), findsNothing);
+      expect(find.byType(AnimatedPositioned), findsOneWidget);
+      expect(find.text('Home'), findsOneWidget);
+    });
 
-    // Scroll down by 150 pixels using the scrollViewKey
-    await tester.drag(find.byKey(scrollViewKey), const Offset(0, -150));
-    await tester.pumpAndSettle();
+    testWidgets('Menu closes when tapping close icon', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(homePage);
 
-    // Now hamburger menu button should be visible
-    expect(find.byKey(const Key('hamburger_button')), findsOneWidget);
+      final scrollView = find.byKey(PortfolioHomePage.scrollViewKey);
+      await tester.drag(scrollView, const Offset(0, -300));
+      await tester.pump();
 
-    // Tap the hamburger button to open menu overlay
-    await tester.tap(find.byKey(const Key('hamburger_button')));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byKey(PortfolioHomePage.hamburgerButtonKey));
+      await tester.pumpAndSettle();
 
-    // Check if menu overlay shows menu items
-    expect(find.text('Home'), findsOneWidget);
-    expect(find.text('About'), findsOneWidget);
+      expect(find.byIcon(Icons.close), findsOneWidget);
+      await tester.tap(find.byIcon(Icons.close));
+      await tester.pumpAndSettle();
 
-    // Tap on a menu item (Home) to close overlay
-    await tester.tap(find.text('Home'));
-    await tester.pumpAndSettle();
+      expect(find.text('Home'), findsNothing);
+    });
 
-    // Menu overlay should disappear after tapping a menu item
-    expect(find.text('Home'), findsNothing);
+    testWidgets('Tapping a menu item scrolls to the section and closes menu', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(homePage);
+
+      final scrollView = find.byKey(PortfolioHomePage.scrollViewKey);
+      await tester.drag(scrollView, const Offset(0, -300));
+      await tester.pump();
+
+      await tester.tap(find.byKey(PortfolioHomePage.hamburgerButtonKey));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('About'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('About'), findsNothing); 
+    });
+
+    testWidgets('Menu overlay has correct structure', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(homePage);
+
+      final scrollView = find.byKey(PortfolioHomePage.scrollViewKey);
+      expect(scrollView, findsOneWidget);
+
+      await tester.drag(scrollView, const Offset(0, -500));
+      await tester.pumpAndSettle();
+
+      final hamburgerButton = find.byKey(PortfolioHomePage.hamburgerButtonKey);
+      expect(hamburgerButton, findsOneWidget);
+
+      await tester.tap(hamburgerButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AnimatedPositioned), findsOneWidget);
+      expect(find.byIcon(Icons.close), findsOneWidget);
+
+      expect(
+        find.widgetWithText(TextButton, 'Drop Me a Message'),
+        findsOneWidget,
+      );
+    });
   });
 }
