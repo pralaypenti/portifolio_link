@@ -302,8 +302,8 @@ class ExperienceSection extends StatelessWidget {
             Text(
               'Tata Consultancy Services | Dec 2021 - Present\n\n'
               '- Role: Flutter Developer\n'
-              '- Delivered high-performance mobile apps for enterprise banking clients including ICICI and SBI.\n'
-              '- Implemented scalable and maintainable codebases using Flutter and MobX state management.\n'
+              '- Delivered high-performance mobile apps for enterprise banking clients including ICICI,SBI and Commercial Bank of Dubai (CBD).\n'
+              '- Implemented scalable and maintainable codebases using Flutter with MobX and Bloc state management.\n'
               '- Integrated RESTful APIs and optimized app performance.\n'
               '- Collaborated in Agile teams to ensure timely delivery and high code quality.\n'
               '- Contributed to reusable component libraries for consistent UI across platforms.',
@@ -346,6 +346,13 @@ class ProjectsSection extends StatelessWidget {
                     "Contributed to the State Bank of India’s mobile banking app, focusing on the loan journey. "
                     "Implemented features like loan applications, eligibility checks, interest calculators, and sanction letter management. "
                     "Used MobX for efficient state management to keep UI logic clean and maintainable.",
+              ),
+              ProjectCard(
+                title: "Commercial Bank of Dubai (CBD) App",
+                description:
+                    "Developed Soft Token Registration and Generate Soft Token screens using Bloc state management. "
+                    "Implemented a live timer with a 6-digit dynamic OTP for secure user authentication. "
+                    "Focused on smooth UI, strong validation, and seamless API integration.",
               ),
             ],
           ),
@@ -478,7 +485,7 @@ class SkillsSection extends StatelessWidget {
     final skillsData = {
       'Languages': ['Dart'],
       'Frameworks': ['Flutter'],
-      'State Management': ['MobX'],
+      'State Management': ['MobX','Bloc'],
       'Tools & Platforms': [
         'VS Code',
         'Android Studio',
